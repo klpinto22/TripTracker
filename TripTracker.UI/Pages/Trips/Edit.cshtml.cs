@@ -8,16 +8,17 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TripTracker.BackService.Models;
 using TripTracker.UI.Data;
+using TripTracker.UI.Services;
 
 namespace TripTracker.UI.Pages.Trips
 {
     public class EditModel : PageModel
     {
-        private readonly TripTracker.UI.Data.ApplicationDbContext _context;
+        private readonly IApiClient _client;
 
-        public EditModel(TripTracker.UI.Data.ApplicationDbContext context)
+        public EditModel(IApiClient client)
         {
-            _context = context;
+            _client = client;
         }
 
         [BindProperty]
@@ -30,7 +31,7 @@ namespace TripTracker.UI.Pages.Trips
                 return NotFound();
             }
 
-            Trip = await _context.Trip.SingleOrDefaultAsync(m => m.Id == id);
+            Trip = await _client.GetTripAsync(id.Value);
 
             if (Trip == null)
             {
@@ -46,30 +47,9 @@ namespace TripTracker.UI.Pages.Trips
                 return Page();
             }
 
-            _context.Attach(Trip).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TripExists(Trip.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _client.PutTripAsync(Trip);
 
             return RedirectToPage("./Index");
-        }
-
-        private bool TripExists(int id)
-        {
-            return _context.Trip.Any(e => e.Id == id);
         }
     }
 }
