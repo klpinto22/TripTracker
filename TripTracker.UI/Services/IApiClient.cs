@@ -9,8 +9,8 @@ namespace TripTracker.UI.Services
 {
     public interface IApiClient
     {
-        Task<List<TripTracker.BackService.Models.Trip>> GetTripsAsync();
-        Task<BackService.Models.Trip> GetTripAsync(int id);
+        Task<List<Trip>> GetTripsAsync();
+        Task<Trip> GetTripAsync(int id);
         Task PutTripAsync(Trip tripToUpdate);
         Task AddTripAsync(Trip tripToAdd);
         Task RemoveTripAsync(int id);
@@ -55,9 +55,10 @@ namespace TripTracker.UI.Services
 
         public async Task PutTripAsync(Trip tripToUpdate)
         {
-            var response = await _HttpClient.PutJsonAsync($"api/Trips/{tripToUpdate.Id}", tripToUpdate);
+            var response = await _HttpClient.PutJsonAsync($"/api/Trips/{tripToUpdate.Id}", tripToUpdate);
 
             response.EnsureSuccessStatusCode();
+
         }
 
         public async Task RemoveTripAsync(int id)
