@@ -57,7 +57,7 @@ namespace TripTracker.BackService.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAsync(int id, [FromBody]Trip value)
         {
-            if (_context.Trips.Any(t => t.Id == id))
+            if (!_context.Trips.Any(t => t.Id == id))
             {
                 return NotFound();
             }
